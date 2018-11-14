@@ -19,11 +19,10 @@ public class DriverSetup {
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "emulator-5554");
 
-
         // path to app
         // Copy the application (.apk), which will become AUT, to the specified location,
         // e.g. "resources" folder of the project
-        File appDir = new File("C:\\Users\\User\\IdeaProjects\\MobileTests\\src\\main\\resources");
+        File appDir = new File("src\\main\\resources");
         File app = new File(appDir, "ContactManager.apk");
 
         //other caps
