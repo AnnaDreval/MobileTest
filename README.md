@@ -1,19 +1,72 @@
-﻿> 1.Rewrite (complete) Driver using “singleton” pattern. Are there any advantages?
+﻿> 1.Add support of appPackage and appActivity parameters for Android devices
+    (reading from a .properties file and then setting in the DesiredCapabilities).
+      Locally installed Appium DT has no need in these parameters, but for Appium server of Minsk Mobile Farm it’s mandatory.
 
-Using of "Singleton" pattern means that we will have only one driver object. And more we do not need.
+In Driver class:
+```sh
+    protected static String APP_PACKAGE;
+    protected static String APP_ACTIVITY;
+```
+In prepareDriver() method:
+```sh
+    APP_PACKAGE = getProp("appPackage");
+    APP_ACTIVITY = getProp("appActivity");
+    
+    if (SUT == null && APP_PACKAGE != null && APP_ACTIVITY != null) {
+         // Native
+         capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, APP_PACKAGE);
+         capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, APP_ACTIVITY);
+    }
+```
+In properties file:
+```sh
+     appPackage=com.example.android.contactmanager
+     appActivity=.ContactManager
+```               
 
-> 2.Suggest improvements for .properties reading. What are the purposes?
 
-2.1. Using of .property file reduces the chance of an error and provides us an easier way to change capabilities;
-2.2. It helps us to avoid hardcoding;
-2.3. We can separate web and native tests.
+> 2.Change settings to run web test on a certain iOS device on Mobile Test Farm. Run test with your changes. Did test pass?
 
-> 3.Add checks of other fields and their titles in “native” test.
+In Driver class:
+```sh
+    protected static String UDID;
+```
+In prepareDriver() method:
+```sh
+   UDID = getProp("udid");
+   
+   case "iOS":
+                   capabilities.setCapability(MobileCapabilityType.UDID, UDID);
+                   browserName = "Safari";
+                   break;
+```
+In properties file:
+```sh
+     platform=iOS
+     udid=4dc76c4ed56e4db389bee0c6dcb97e13973b5821
+```     
+>3.Change settings to run native test on a certain/random Android device on Mobile Test Farm. Run test with your changes. Did test pass?
 
-I have added checks for Target Account, Contact Name and Contact phone.
+In Driver class:
+```sh
+    protected static String DEVICE_NAME;
+```
+In prepareDriver() method:
+```sh
+   DEVICE_NAME = getProp("deviceName");
+   
+   case "Android":
+                  capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, DEVICE_NAME);
+                  browserName = "Chrome";
+                  break;
+```
+In properties file:
+```sh
+     platform=Android
+     deviceName=LGE Nexus 5
+```    
 
-> 5.Which checks would you place in the “web” test?
-> Implement checks for “web” test in code and try to use.
+>4.What’s wrong with our code? How to fix/improve it? Implement your suggestions.
 
-To my mind first things that we should check in "web" tests are URL of the page and it's title.
-So I have implemented them.
+There are too many hardcoded places, which could cause an error. 
+And we can use @AndroidFindBy and @iOSFindBy annotations instead of just @FindBy.

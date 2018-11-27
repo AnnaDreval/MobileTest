@@ -1,6 +1,7 @@
 package setup;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,6 +23,10 @@ public class Driver extends TestProperties{
     protected static String SUT; // site under testing
     protected static String TEST_PLATFORM;
     protected static String DRIVER;
+    protected static String DEVICE_NAME;
+    protected static String APP_PACKAGE;
+    protected static String APP_ACTIVITY;
+    protected static String UDID;
 
     /**
      * Initialize driver with appropriate capabilities depending on platform and application
@@ -35,6 +40,10 @@ public class Driver extends TestProperties{
         SUT = (t_sut == null ? null : "http://" + t_sut);
         TEST_PLATFORM = getProp("platform");
         DRIVER = getProp("driver");
+        DEVICE_NAME = getProp("deviceName");
+        APP_PACKAGE = getProp("appPackage");
+        APP_ACTIVITY = getProp("appActivity");
+        UDID = getProp("udid");
 
         capabilities = new DesiredCapabilities();
         String browserName;
@@ -42,12 +51,12 @@ public class Driver extends TestProperties{
         // Setup test platform: Android or iOS. Browser also depends on a platform.
         switch (TEST_PLATFORM) {
             case "Android":
-                // default Android emulator
-                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
+                capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, DEVICE_NAME);
                 browserName = "Chrome";
                 break;
 
             case "iOS":
+                capabilities.setCapability(MobileCapabilityType.UDID, UDID);
                 browserName = "Safari";
                 break;
 
@@ -58,12 +67,12 @@ public class Driver extends TestProperties{
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, TEST_PLATFORM);
 
         // Setup type of application: mobile, web (or hybrid)
-        if (AUT != null && SUT == null) {
+        if (SUT == null && APP_PACKAGE != null && APP_ACTIVITY != null) {
             // Native
-            File app = new File(AUT);
-            capabilities.setCapability(MobileCapabilityType.APP, app.getAbsolutePath());
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, APP_PACKAGE);
+            capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, APP_ACTIVITY);
 
-        } else if (SUT != null && AUT == null) {
+        } else if (SUT != null && APP_PACKAGE == null && APP_ACTIVITY == null) {
             // Web
             capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, browserName);
 

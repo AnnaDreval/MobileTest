@@ -41,7 +41,7 @@ public class SimpleNativeTests extends Driver {
         By contactPhoneTxt_btn = By.id(app_package_name + "contactPhoneEditText");
         assertTrue(driver().findElement(contactPhoneTxt_btn).isDisplayed());
 
-        System.out.println("Simplest Appium test done");
+        System.out.println("Simple Appium test done");
     }
 
 }
